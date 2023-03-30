@@ -10,11 +10,11 @@ function App() {
   // const [search, setSearch] = useState("");
   return (
     <div className="App">
-      <BrowserRouter>
+      <BrowserRouter basename="Shopping-Cart">
         <ToastContainer />
         <div className="content-container">
           <Switch>
-            <Route path="/" component={Home} exact />
+            <Route path="/Shopping-Cart" component={Home} exact />
             <Route path="/cart" component={Cart} />
             <Route path="/not-found" component={NotFound} />
             <Route path="/home" component={Home} />

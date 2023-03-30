@@ -11,7 +11,7 @@ export const productsFetch = createAsyncThunk(
   async () => {
     try {
       const response = await axios.get(
-        "https://dummyjson.com/products?limit=100"
+        "https://dummyjson.com/products?limit=30"
       );
       return response.data;
     } catch (error) {

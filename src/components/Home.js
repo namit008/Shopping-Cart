@@ -1,8 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 import { React, useState } from "react";
 // import { useHistory } from "react-router";
 import { addToCart, getTotals } from "../slices/cartSlice";
-import { useGetAllProductsQuery } from "../slices/productsApi";
+// import { useGetAllProductsQuery } from "../slices/productsApi";
 import NavBar from "./NavBar";
 import SearchBar from "./SearchBar";
 import { useEffect } from "react";
@@ -10,18 +11,57 @@ import Category from "./Category";
 
 const Home = () => {
   const { status } = useSelector((state) => state.products);
+  const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
   const dispatch = useDispatch();
 
-  const { data } = useGetAllProductsQuery();
-  
-  const categry = new Set(data?.products?.map((value) => value.category));
+  const [data, setData] = useState([]);
+
+  const categry = new Set(data?.map((value) => value.category));
   const [finalData, setFinalData] = useState([]);
+  const handleScroll = (event) => {
+    console.log(page, "page");
+    if (
+      window.innerHeight + document.documentElement.scrollTop + 1 >=
+      document.documentElement.scrollHeight
+    ) {
+      setPage((prevPage) => prevPage + 10);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios.get(
+        `https://dummyjson.com/products?skip=${page}&limit=10`
+      );
+      const responseData = response.data;
+      console.log(responseData, "responseData");
+      if (page === 0) {
+        setData(responseData.products);
+      } else {
+        setData((prev) => [...prev, ...responseData.products]);
+      }
+    };
+    const fetchSearchData = async () => {
+      const response = await axios.get(`https://dummyjson.com/products?limit=100`);
+      const responseData = response.data;
+      console.log(responseData, "responseData");
+      setData(responseData.products);
+      setPage(0);
+    };
+    if (search.length) {
+      fetchSearchData();
+    } else {
+      fetchData();
+    }
+  }, [page, search]);
+
   useEffect(() => {
     const innerFinalData = [];
     categry?.forEach((element) => {
       const innerdata = { category: element, catData: [] };
-      data?.products?.forEach((value) => {
+      console.log(data, "data");
+      data?.forEach((value) => {
         if (value.category === element) {
           innerdata.catData.push(value);
         }
@@ -34,8 +74,11 @@ const Home = () => {
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
     dispatch(getTotals());
-
   };
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className="home-container">
@@ -46,7 +89,7 @@ const Home = () => {
           <div className="products">
             {search.length
               ? data &&
-                data?.products
+                data
                   ?.filter((product) =>
                     product.title?.toLowerCase().includes(search.toLowerCase())
                   )

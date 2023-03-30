@@ -14,7 +14,7 @@ function App() {
         <ToastContainer />
         <div className="content-container">
           <Switch>
-            <Route path="/Shopping-Cart" component={Home} exact />
+            <Route path="/" component={Home} exact />
             <Route path="/cart" component={Cart} />
             <Route path="/not-found" component={NotFound} />
             <Route path="/home" component={Home} />

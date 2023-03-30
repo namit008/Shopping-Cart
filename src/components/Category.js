@@ -2,16 +2,12 @@ import React from "react";
 import { addToCart, getTotals } from "../slices/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 const Category = ({ product }) => {
-  console.log(product, "product");
   const dispatch = useDispatch();
   const category = product.category;
   const data = product.catData;
   const handleAddToCart = (product) => {
-    console.log(product);
     dispatch(addToCart(product));
     dispatch(getTotals());
-
-    // history.push("/cart");
   };
   return (
     <div>

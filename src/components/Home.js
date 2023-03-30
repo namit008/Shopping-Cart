@@ -30,10 +30,10 @@ const Home = () => {
     });
     setFinalData(innerFinalData);
   }, [data]);
-  console.log(finalData, "finalData");
+
 
   const handleAddToCart = (product) => {
-    console.log(product);
+
     dispatch(addToCart(product));
     dispatch(getTotals());
 

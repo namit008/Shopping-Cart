@@ -33,7 +33,6 @@ const Cart = () => {
   return (
     <div className="cart-container">
       <NavBar/>
-      {console.log(cart.cartItems)}
       <h2>Shopping Cart</h2>
       {cart.cartItems.length === 0 ? (
         <div className="cart-empty">

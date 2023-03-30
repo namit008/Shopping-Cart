@@ -32,7 +32,6 @@ function SearchBar({ setSearch }) {
   };
 
   const handleChange = (value) => {
-    console.log("Debounce working");
     setSearch(value);
   };
 

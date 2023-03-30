@@ -1,6 +1,6 @@
 import React from "react";
 import { addToCart, getTotals } from "../slices/cartSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 const Category = ({ product }) => {
   const dispatch = useDispatch();
   const category = product.category;
@@ -10,7 +10,7 @@ const Category = ({ product }) => {
     dispatch(getTotals());
   };
   return (
-    <div>
+    <>
       <div style={{ display: "flex", marginTop: "4rem" }}>
         <h1>
           <b>
@@ -34,7 +34,7 @@ const Category = ({ product }) => {
           </div>
         ))}
       </div>
-    </div>
+    </>
   );
 };
 export default Category;

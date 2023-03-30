@@ -14,12 +14,12 @@ const Home = () => {
   const dispatch = useDispatch();
 
   const { data } = useGetAllProductsQuery();
-  const categry = data?.products?.map((value) => value.category);
-  const a = new Set(categry);
+  
+  const categry = new Set(data?.products?.map((value) => value.category));
   const [finalData, setFinalData] = useState([]);
   useEffect(() => {
     const innerFinalData = [];
-    a?.forEach((element) => {
+    categry?.forEach((element) => {
       const innerdata = { category: element, catData: [] };
       data?.products?.forEach((value) => {
         if (value.category === element) {
@@ -31,13 +31,10 @@ const Home = () => {
     setFinalData(innerFinalData);
   }, [data]);
 
-
   const handleAddToCart = (product) => {
-
     dispatch(addToCart(product));
     dispatch(getTotals());
 
-    // history.push("/cart");
   };
 
   return (
@@ -72,7 +69,11 @@ const Home = () => {
                     </div>
                   ))
               : finalData?.map((product) => {
-                  return <Category product={product} />;
+                  return (
+                    <div key={product.category}>
+                      <Category product={product} />
+                    </div>
+                  );
                 })}
           </div>
         </>

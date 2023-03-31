@@ -12,6 +12,7 @@ import Category from "./Category";
 const Home = () => {
   const { status } = useSelector((state) => state.products);
   const [page, setPage] = useState(0);
+  const [showScroll, setShowScroll] = useState(false);
   const [search, setSearch] = useState("");
   const dispatch = useDispatch();
 
@@ -20,7 +21,14 @@ const Home = () => {
   const categry = new Set(data?.map((value) => value.category));
   const [finalData, setFinalData] = useState([]);
   const handleScroll = (event) => {
-    console.log(page, "page");
+    if (!showScroll && window.pageYOffset > 500) {
+      console.log(window.pageYOffset,"window.pageYOffset")
+      setShowScroll(true);
+    } else if (showScroll && window.pageYOffset <= 500) {
+      console.log(window.pageYOffset,"window.pageYOffset")
+      setShowScroll(false);
+    }
+
     if (
       window.innerHeight + document.documentElement.scrollTop + 1 >=
       document.documentElement.scrollHeight
@@ -43,7 +51,9 @@ const Home = () => {
       }
     };
     const fetchSearchData = async () => {
-      const response = await axios.get(`https://dummyjson.com/products?limit=100`);
+      const response = await axios.get(
+        `https://dummyjson.com/products?limit=100`
+      );
       const responseData = response.data;
       console.log(responseData, "responseData");
       setData(responseData.products);
@@ -74,6 +84,10 @@ const Home = () => {
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
     dispatch(getTotals());
+  };
+  const scrollTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setShowScroll(false);
   };
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -118,6 +132,11 @@ const Home = () => {
                     </div>
                   );
                 })}
+            {showScroll && (
+              <button className="scroll" onClick={() => scrollTop()}>
+                <span className="glyphicon glyphicon-chevron-up"></span>
+              </button>
+            )}
           </div>
         </>
       ) : status === "pending" ? (

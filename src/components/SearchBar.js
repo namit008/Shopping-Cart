@@ -1,6 +1,8 @@
-import React, { useCallback } from "react";
-
+import React, { useCallback, useState } from "react";
+import { useGetAllProductsQuery } from "../slices/productsApi";
 function SearchBar({ setSearch }) {
+  const [searchValue, setSearchValue] = useState("");
+  const { data } = useGetAllProductsQuery();
   const style = {
     // backgroundColor: "black",
     // display: "flex",
@@ -34,6 +36,13 @@ function SearchBar({ setSearch }) {
   const handleChange = (value) => {
     setSearch(value);
   };
+  const onChange = (value) => {
+    // state is updated on every value change, so input will work
+    setSearchValue(value);
+
+    // call debounced request here
+    optimizedFn(value);
+  };
 
   const optimizedFn = useCallback(debounce(handleChange), []);
 
@@ -41,10 +50,31 @@ function SearchBar({ setSearch }) {
     <div style={style}>
       <input
         type="text"
+        value={searchValue}
+        // value={(e)=>e.target.value || searchValue}
         placeholder="Search Your Product "
         style={{ width: "40%", height: "35px" }}
-        onChange={(e) => optimizedFn(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
       />
+      <div className="dropdown">
+        {data?.products
+          .filter(
+            (item) =>
+              searchValue &&
+              item.title?.toLowerCase().includes(searchValue.toLowerCase()) &&
+              item.title?.toLowerCase() !== searchValue.toLowerCase()
+          )
+          .slice(0, 10)
+          .map((item) => (
+            <div
+              onClick={() => onChange(item.title)}
+              className="dropdown-row"
+              key={item.title}
+            >
+              {item.title}
+            </div>
+          ))}
+      </div>
     </div>
   );
 }

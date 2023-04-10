@@ -1,19 +1,21 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-
+import { useSelector, useDispatch } from "react-redux";
+import { setSearchValue } from "../slices/searchBar";
+import SearchBar from "../slices/searchBar";
+import Search from "./Search";
 
 const NavBar = () => {
   const { cartTotalQuantity } = useSelector((state) => state.cart);
-  
+  const dispatch = useDispatch();
   return (
     <nav className="nav-bar">
-      <Link to="/home">
-        <h2>Shopping Mart</h2>
+      <Link className="logoAnchor" to="/home">
+        <h2 onClick={() => dispatch(setSearchValue(""))}>Shopping Mart</h2>
       </Link>
 
-     
-      <Link to="/cart">
+      <Search />
+      <Link className="cartAnchor" to="/cart">
         <div className="nav-bag">
           <svg
             xmlns="http://www.w3.org/2000/svg"

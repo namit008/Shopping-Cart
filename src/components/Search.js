@@ -1,26 +1,14 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setSearchValue } from "../slices/searchBar";
 import { useGetAllProductsQuery } from "../slices/productsApi";
-function SearchBar({ setSearch }) {
-  const [searchValue, setSearchValue] = useState("");
+const Search = () => {
+  const dispatch = useDispatch();
+  const searchVal = useSelector((state) => state.search.value);
+  const [searchValue, setSearchVal] = useState("");
   const { data } = useGetAllProductsQuery();
-  const style = {
-    // backgroundColor: "black",
-    // display: "flex",
-    // justifyContent: "center",
-    // padding: "5px",
-    // marginTop: "3rem",
-    // right: 0,
-    // width: "100%",
-    // position: "fixed",
-    right: "0px",
-    width: "100%",
-    position: "fixed",
-    /* margin-left: 11%; */
-    marginRight: "20%",
-    paddingLeft: "58%",
-    paddingRight: "0%",
-  };
 
+  console.log(searchVal,searchValue);
   const debounce = (func) => {
     let timer;
     return function (...args) {
@@ -32,13 +20,16 @@ function SearchBar({ setSearch }) {
       }, 500);
     };
   };
-
+useEffect(()=>{
+  console.log("inside Usefffect")
+},[])
   const handleChange = (value) => {
-    setSearch(value);
+    dispatch(setSearchValue(value));
   };
   const onChange = (value) => {
+    // dispatch(setSearchValue(value));
     // state is updated on every value change, so input will work
-    setSearchValue(value);
+    setSearchVal(value);
 
     // call debounced request here
     optimizedFn(value);
@@ -47,22 +38,21 @@ function SearchBar({ setSearch }) {
   const optimizedFn = useCallback(debounce(handleChange), []);
 
   return (
-    <div style={style}>
+    <div className="searchBar">
       <input
         type="text"
         value={searchValue}
-        // value={(e)=>e.target.value || searchValue}
         placeholder="Search Your Product "
-        style={{ width: "40%", height: "35px" }}
+        style={{ width: "90%", height: "85%" }}
         onChange={(e) => onChange(e.target.value)}
       />
       <div className="dropdown">
         {data?.products
           .filter(
             (item) =>
-              searchValue &&
-              item.title?.toLowerCase().includes(searchValue.toLowerCase()) &&
-              item.title?.toLowerCase() !== searchValue.toLowerCase()
+              searchVal.length &&
+              item.title?.toLowerCase().includes(searchVal.toLowerCase()) &&
+              item.title?.toLowerCase() !== searchVal.toLowerCase()
           )
           .slice(0, 10)
           .map((item) => (
@@ -77,6 +67,6 @@ function SearchBar({ setSearch }) {
       </div>
     </div>
   );
-}
+};
 
-export default SearchBar;
+export default Search;

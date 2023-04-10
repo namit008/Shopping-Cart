@@ -3,14 +3,16 @@ import axios from "axios";
 import { React, useState } from "react";
 // import { useHistory } from "react-router";
 import { addToCart, getTotals } from "../slices/cartSlice";
+import { setSearchValue } from "../slices/searchBar";
 // import { useGetAllProductsQuery } from "../slices/productsApi";
 import NavBar from "./NavBar";
-import SearchBar from "./SearchBar";
+// import SearchBar from "./SearchBar";
 import { useEffect } from "react";
 import Category from "./Category";
 
 const Home = () => {
   const { status } = useSelector((state) => state.products);
+  const searchVal = useSelector((state) => state.search.value);
   const [page, setPage] = useState(0);
   const [showScroll, setShowScroll] = useState(false);
   const [search, setSearch] = useState("");
@@ -22,10 +24,10 @@ const Home = () => {
   const [finalData, setFinalData] = useState([]);
   const handleScroll = (event) => {
     if (!showScroll && window.pageYOffset > 500) {
-      console.log(window.pageYOffset,"window.pageYOffset")
+      console.log(window.pageYOffset, "window.pageYOffset");
       setShowScroll(true);
     } else if (showScroll && window.pageYOffset <= 500) {
-      console.log(window.pageYOffset,"window.pageYOffset")
+      console.log(window.pageYOffset, "window.pageYOffset");
       setShowScroll(false);
     }
 
@@ -36,7 +38,10 @@ const Home = () => {
       setPage((prevPage) => prevPage + 10);
     }
   };
-
+  useEffect(() => {
+    dispatch(setSearchValue(""));
+    console.log("inside Useeffect");
+  }, []);
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(
@@ -59,12 +64,12 @@ const Home = () => {
       setData(responseData.products);
       setPage(0);
     };
-    if (search.length) {
+    if (searchVal.length) {
       fetchSearchData();
     } else {
       fetchData();
     }
-  }, [page, search]);
+  }, [page, searchVal]);
 
   useEffect(() => {
     const innerFinalData = [];
@@ -99,13 +104,15 @@ const Home = () => {
       {status === "success" ? (
         <>
           <NavBar />
-          <SearchBar setSearch={(s) => setSearch(s)} />
+          {/* <SearchBar setSearch={(s) => setSearch(s)} /> */}
           <div className="products">
-            {search.length
+            {searchVal.length
               ? data &&
                 data
                   ?.filter((product) =>
-                    product.title?.toLowerCase().includes(search.toLowerCase())
+                    product.title
+                      ?.toLowerCase()
+                      .includes(searchVal.toLowerCase())
                   )
                   .reverse()
                   .map((product) => (
